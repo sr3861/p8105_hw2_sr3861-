@@ -1,92 +1,19 @@
 ---
-title: "P8105 Homework 1"
+title: "P8105 Homework 2"
 output: github_document
 author: Shritama Ray
-date: 9/24/2022
+date: 10/5/2022
 ---
 
-## Problem 1
+## Problem 1: NYC Transit Data
 
-Load the **penguins** dataset:
-
-```{r load_penguins}
-data("penguins", package = "palmerpenguins")
-```
-
-Size of the dataset:
-```{r penguins_size}
-nrow(penguins)
-ncol(penguins)
-```
-
-Descriptive Statistics:
-```{r descriptive_stats}
-summary(penguins)
-```
-
-**Discussion:**
-This dataset consists of a 344 row x 8 column tibble.
-The variables are species, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex, and year. There are **3 species** of penguins represented, across **3 islands.** The mean flipper length of the penguins is **200.9 mm.** 
-
-**Scatterplot of flipper length vs. bill length**
-```{r load_tidyverse, message = FALSE}
-#Load tidyverse library
-```
-```{r scatterplot, warning = FALSE}
+```{r read and clean}
 library(tidyverse)
-#Create scatter plot colored by species
-ggplot(penguins, aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + geom_point()+ xlab("Bill Length (mm)") + ylab("Flipper Length (mm)")
-#Save plot
-ggsave("penguins_scatter.pdf", height = 4, width = 6)
+transit_df = read_csv("./Data/subway_data.csv") %>%
+  janitor::clean_names() %>%
+  select(line:entry, vending, ada)%>%
+  mutate(entry = recode(entry, YES = TRUE, NO = FALSE)) 
+
+head(transit_df, 10)
 ```
-
-## Problem 2
-
-**Create a data frame:**
-
-```{r dataframe}
-#dataframe named 'problem2'
-problem2 = tibble(
-  # random sample of size 10 from standard normal distribution
-  vec_rand_10 = rnorm(10, mean = 0, sd = 1),
-  # logical vector indication whether sample elements are > 0 
-  vec_logical = vec_rand_10 > 0,
-  # character vector of length 10
-  vec_char = character(10),
-  # factor vector of length 10 with 3 factor levels
-  vec_factor = factor(c("L1", "L2", "L3", "L3","L3","L1","L3", "L2", "L1", "L1"))
-)
-```
-
-**Try to take the mean of each variable in the dataframe:**
-```{r mean of vec_rand_10}
-mean(pull(problem2,vec_rand_10))
-```
-That works!
-
-```{r mean of logical vector}
-mean(pull(problem2,vec_logical))
-```
-That works too!
-
-```{r mean of character vector}
-mean(pull(problem2,vec_char))
-```
-That doesn't work :(
-
-```{r mean of factor vector}
-mean(pull(problem2,vec_factor))
-```
-That doesn't work either :(
-
-Apply the as.numeric function:
-
-```{r apply as.numeric, eval=FALSE}
-as.numeric(problem2$vec_char)
-as.numeric(problem2$vec_logical)
-as.numeric(problem2$vec_factor)
-```
-
-**What Happens?**
-When the as.numeric function is applied, the character vector becomes a vector of "NA" values. The logical vector becomes a vector of 0 and 1 numeric values. The factor vector also becomes a vector of numeric values 1, 2 and 3. This explains why the we were able to calculate the mean of the logical vector and weren't able to calculate the mean of the character vector. However, it doesn't explain why we weren't able to take the mean of the factor vector. The factor vector can be converted to numeric values, so I'm not sure why the mean function did not work. 
 
