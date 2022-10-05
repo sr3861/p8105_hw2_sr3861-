@@ -47,4 +47,17 @@ filter(transit_df, vending == "NO") %>%
 ```
 **69/183** of the entrances/exits without vending allow entry
 
+Reformat the data so that route number and route name are distinct variables:
+```{r reformat long}
+  mutate_at(transit_df, c('route8','route9','route10','route11'), as.character) %>%
+  pivot_longer(route1:route11, 
+               names_to = "route_number", 
+               names_prefix = "route", 
+               values_to = "route_name")
+```
+
+How many distinct stations serve the A train?
+```{r distinct stations A train}
+filter(distinct(transit_df, line, station_name, route_name),route_name == "A")
+```
 
