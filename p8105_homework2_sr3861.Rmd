@@ -116,8 +116,6 @@ Mr. Trash Wheel collected a total of **`r sum(pull(filter(combined_trash, wheel 
 
 ## Problem 3: FiveThirtyEight
 
-First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
-
 Read & Clean pols-month.csv:
 ```{r pols read & clean}
 pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
@@ -127,3 +125,42 @@ pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
          president = recode(prez_dem, '1' = "dem", '0' = "gop")) %>%
   select(-day, -prez_dem, -prez_gop)
 ```
+
+Read & clean snp.csv:
+```{r read & clean snp}
+snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") 
+
+#Convert year to 4 digits
+four_year = as.Date(snp$date,"%m/%d/%y")
+four_year = as.Date(ifelse(four_year > Sys.Date(), format(four_year, "19%y-%m-%d"), format(four_year)))
+snp[,"date"] <- four_year
+
+#Clean data
+snp = 
+  separate(snp, date, into = c("year", "month", "day"))%>%
+  mutate(month = month.name[as.integer(month)]) %>%
+  select(year, month, close)
+```
+
+Read & clean unemployment dataset:
+```{r unemployment}
+unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
+  pivot_longer(Jan:Dec,
+               names_to = "month",
+               values_to = "percent") %>%
+  mutate(year = as.character(Year), 
+         month = month.name[match(pull(.,month),month.abb)]) %>%
+  arrange(year, month)
+
+#Note: I removed the janitor::clean_names() statement since it made the months lower case
+```
+
+
+Merge the Datasets:
+```{r 538 merge}
+merged_538 = left_join(pols_month, snp, by = c("year","month")) %>%
+              left_join(unemployment, by = c("year","month"))
+```
+
+Summary:
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
