@@ -7,6 +7,7 @@ date: 10/5/2022
 
 ## Problem 1: NYC Transit Data
 
+Read & Clean the Dataset
 ```{r read and clean}
 library(tidyverse)
 transit_df = read_csv("./Data/subway_data.csv") %>%
@@ -16,4 +17,34 @@ transit_df = read_csv("./Data/subway_data.csv") %>%
 
 head(transit_df, 10)
 ```
+
+**Summary:**
+This dataset contains information on the NYC subway system. Specifically, the dataset describes the routes and locations of the stations, along with some other features such as ADA accessibility, vending machines, and entrance type. So far I've manipulated the data to create clean variable names, remove the variables I am not interested in, and convert the entry values to logical operators. The resulting dataset has **1868 rows** and **19 columns.** The data is **NOT tidy.** The route variables are in a wide format, resulting in many NA values. 
+
+**Questions:**
+
+1. How many distinct stations are there?
+```{r distinct stations}
+nrow(distinct(transit_df, line, station_name))
+```
+There are **465** distinct stations.
+
+2. How many stations are ADA compliant?
+```{r ada compliant}
+distinct(transit_df, line, station_name, ada) %>%
+  filter(ada == TRUE) %>%
+  nrow()
+```
+**84** stations are ADA compliant
+
+3. What proportion of station entrances/exits without vending allow entrance?
+```{r no vending, allow entrance}
+filter(transit_df, vending == "NO" & entry == TRUE) %>%
+  nrow()
+
+filter(transit_df, vending == "NO") %>%
+  nrow()
+```
+**69/183** of the entrances/exits without vending allow entry
+
 

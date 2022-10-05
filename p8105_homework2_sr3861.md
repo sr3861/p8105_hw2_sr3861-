@@ -5,6 +5,8 @@ Shritama Ray
 
 ## Problem 1: NYC Transit Data
 
+Read & Clean the Dataset
+
 ``` r
 library(tidyverse)
 ```
@@ -56,3 +58,55 @@ head(transit_df, 10)
     ## #   route10 <dbl>, route11 <dbl>, entrance_type <chr>, entry <lgl>,
     ## #   vending <chr>, ada <lgl>, and abbreviated variable names ¹​station_name,
     ## #   ²​station_latitude, ³​station_longitude
+
+**Summary:** This dataset contains information on the NYC subway system.
+Specifically, the dataset describes the routes and locations of the
+stations, along with some other features such as ADA accessibility,
+vending machines, and entrance type. So far I’ve manipulated the data to
+create clean variable names, remove the variables I am not interested
+in, and convert the entry values to logical operators. The resulting
+dataset has **1868 rows** and **19 columns.** The data is **NOT tidy.**
+The route variables are in a wide format, resulting in many NA values.
+
+**Questions:**
+
+1.  How many distinct stations are there?
+
+``` r
+nrow(distinct(transit_df, line, station_name))
+```
+
+    ## [1] 465
+
+There are **465** distinct stations.
+
+2.  How many stations are ADA compliant?
+
+``` r
+distinct(transit_df, line, station_name, ada) %>%
+  filter(ada == TRUE) %>%
+  nrow()
+```
+
+    ## [1] 84
+
+**84** stations are ADA compliant
+
+3.  What proportion of station entrances/exits without vending allow
+    entrance?
+
+``` r
+filter(transit_df, vending == "NO" & entry == TRUE) %>%
+  nrow()
+```
+
+    ## [1] 69
+
+``` r
+filter(transit_df, vending == "NO") %>%
+  nrow()
+```
+
+    ## [1] 183
+
+**69/183** of the entrances/exits without vending allow entry
