@@ -113,3 +113,17 @@ Professor Trash Wheel collected a total of **`r sum(pull(filter(combined_trash, 
 What was the total number of sports balls collected by Mr. Trash Wheel in 2020?
 
 Mr. Trash Wheel collected a total of **`r sum(pull(filter(combined_trash, wheel == "Mr." & year == 2020), sports_balls))`** sports balls in 2020. 
+
+## Problem 3: FiveThirtyEight
+
+First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
+
+Read & Clean pols-month.csv:
+```{r pols read & clean}
+pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day")) %>%
+  mutate(month = month.name[as.integer(month)],
+         president = recode(prez_dem, '1' = "dem", '0' = "gop")) %>%
+  select(-day, -prez_dem, -prez_gop)
+```

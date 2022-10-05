@@ -26,28 +26,6 @@ transit_df = read_csv("./Data/subway_data.csv") %>%
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
-``` r
-head(transit_df, 10)
-```
-
-    ## # A tibble: 10 × 19
-    ##    line     station_…¹ stati…² stati…³ route1 route2 route3 route4 route5 route6
-    ##    <chr>    <chr>        <dbl>   <dbl> <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
-    ##  1 4 Avenue 25th St       40.7   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ##  2 4 Avenue 25th St       40.7   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ##  3 4 Avenue 36th St       40.7   -74.0 N      R      <NA>   <NA>   <NA>   <NA>  
-    ##  4 4 Avenue 36th St       40.7   -74.0 N      R      <NA>   <NA>   <NA>   <NA>  
-    ##  5 4 Avenue 36th St       40.7   -74.0 N      R      <NA>   <NA>   <NA>   <NA>  
-    ##  6 4 Avenue 45th St       40.6   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ##  7 4 Avenue 45th St       40.6   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ##  8 4 Avenue 45th St       40.6   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ##  9 4 Avenue 45th St       40.6   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ## 10 4 Avenue 53rd St       40.6   -74.0 R      <NA>   <NA>   <NA>   <NA>   <NA>  
-    ## # … with 9 more variables: route7 <chr>, route8 <dbl>, route9 <dbl>,
-    ## #   route10 <dbl>, route11 <dbl>, entrance_type <chr>, entry <lgl>,
-    ## #   vending <chr>, ada <lgl>, and abbreviated variable names ¹​station_name,
-    ## #   ²​station_latitude, ³​station_longitude
-
 **Summary:** This dataset contains information on the NYC subway system.
 Specifically, the dataset describes the routes and locations of the
 stations, along with some other features such as ADA accessibility,
@@ -180,4 +158,31 @@ Professor Trash Wheel collected a total of **190.12** tons of trash.
 What was the total number of sports balls collected by Mr. Trash Wheel
 in 2020?
 
-Professor Trash Wheel collected a total of **856** sports balls in 2020.
+Mr. Trash Wheel collected a total of **856** sports balls in 2020.
+
+## Problem 3: FiveThirtyEight
+
+First, clean the data in pols-month.csv. Use separate() to break up the
+variable mon into integer variables year, month, and day; replace month
+number with month name; create a president variable taking values gop
+and dem, and remove prez_dem and prez_gop; and remove the day variable.
+
+Read & Clean pols-month.csv:
+
+``` r
+pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day")) %>%
+  mutate(month = month.name[as.integer(month)],
+         president = recode(prez_dem, '1' = "dem", '0' = "gop")) %>%
+  select(-day, -prez_dem, -prez_gop)
+```
+
+    ## Rows: 822 Columns: 9
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl  (8): prez_gop, gov_gop, sen_gop, rep_gop, prez_dem, gov_dem, sen_dem, r...
+    ## date (1): mon
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
