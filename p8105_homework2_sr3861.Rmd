@@ -5,11 +5,14 @@ author: Shritama Ray
 date: 10/5/2022
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
 ## Problem 1: NYC Transit Data
 
 Read & Clean the Dataset
 ```{r read and clean}
-library(tidyverse)
 transit_df = read_csv("./Data/subway_data.csv") %>%
   janitor::clean_names() %>%
   select(line:entry, vending, ada)%>%
@@ -73,3 +76,14 @@ nrow(
     route_name == "A" & ada == TRUE))
 ```
 **17** of the stations that serve the A train are ADA compliant. 
+
+##Problem 2: Mr. Trash Wheel 
+
+Read and clean the dataset:
+```{r read and clean trash_wheel}
+library(readxl)
+trash_wheel = read_excel("./Data/trash_wheel.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549") %>%
+  janitor::clean_names() %>%
+   filter(dumpster != '') %>%
+   mutate(sports_balls = as.integer(sports_balls))
+```
