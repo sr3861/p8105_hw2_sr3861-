@@ -5,20 +5,9 @@ Shritama Ray
 
 ## Problem 1: NYC Transit Data
 
+*My attempt to solve without the solutions*
+
 Read & Clean the Dataset
-
-``` r
-library(tidyverse)
-```
-
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
-    ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
-    ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
 
 ``` r
 transit_df = read_csv("./Data/subway_data.csv") %>%
@@ -147,3 +136,48 @@ nrow(
     ## [1] 17
 
 **17** of the stations that serve the A train are ADA compliant.
+
+## Problem 2: Mr. Trash Wheel
+
+Read and clean the Mr. Trash Wheel dataset:
+
+``` r
+library(readxl)
+mr_trash = read_excel("./Data/trash_wheel.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549") %>%
+  janitor::clean_names() %>%
+   filter(dumpster != '') %>%
+   mutate(sports_balls = as.integer(sports_balls), year = as.integer(year))
+```
+
+Read and clean the Professor Trash Wheel sheet:
+
+``` r
+prof_trash = read_excel("./Data/trash_wheel.xlsx", sheet = "Professor Trash Wheel", range = "A2:M96") %>%
+  janitor::clean_names() %>%
+   filter(dumpster != '')
+```
+
+Combine the two datasets:
+
+``` r
+#First create a new variable to track each dataset
+mr_trash = mutate(mr_trash, wheel = "Mr.")
+prof_trash = mutate(prof_trash, wheel = "Prof")
+
+#combine
+combined_trash = bind_rows(mr_trash, prof_trash)
+```
+
+This combined dataset has a total of **641** rows and **15** columns.
+Some of the key variables include the dumpster, month/year of
+collection, weight in tons, \# of homes powered, and the count of types
+of trash, such as grocery bags, cigarette butts, etc.
+
+What was the total weight of trash collected by Professor Trash Wheel?
+
+Professor Trash Wheel collected a total of **190.12** tons of trash.
+
+What was the total number of sports balls collected by Mr. Trash Wheel
+in 2020?
+
+Professor Trash Wheel collected a total of **856** sports balls in 2020.

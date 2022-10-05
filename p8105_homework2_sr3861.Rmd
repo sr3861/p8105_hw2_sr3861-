@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 ## Problem 1: NYC Transit Data
+*My attempt to solve without the solutions*
 
 Read & Clean the Dataset
 ```{r read and clean}
@@ -17,8 +18,6 @@ transit_df = read_csv("./Data/subway_data.csv") %>%
   janitor::clean_names() %>%
   select(line:entry, vending, ada)%>%
   mutate(entry = recode(entry, YES = TRUE, NO = FALSE)) 
-
-head(transit_df, 10)
 ```
 
 **Summary:**
@@ -77,13 +76,40 @@ nrow(
 ```
 **17** of the stations that serve the A train are ADA compliant. 
 
-##Problem 2: Mr. Trash Wheel 
+## Problem 2: Mr. Trash Wheel 
 
-Read and clean the dataset:
+Read and clean the Mr. Trash Wheel dataset:
 ```{r read and clean trash_wheel}
 library(readxl)
-trash_wheel = read_excel("./Data/trash_wheel.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549") %>%
+mr_trash = read_excel("./Data/trash_wheel.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N549") %>%
   janitor::clean_names() %>%
    filter(dumpster != '') %>%
-   mutate(sports_balls = as.integer(sports_balls))
+   mutate(sports_balls = as.integer(sports_balls), year = as.integer(year))
 ```
+
+Read and clean the Professor Trash Wheel sheet:
+```{r read & clean professor trash wheel}
+prof_trash = read_excel("./Data/trash_wheel.xlsx", sheet = "Professor Trash Wheel", range = "A2:M96") %>%
+  janitor::clean_names() %>%
+   filter(dumpster != '')
+```
+
+Combine the two datasets:
+```{r combine trash wheels}
+#First create a new variable to track each dataset
+mr_trash = mutate(mr_trash, wheel = "Mr.")
+prof_trash = mutate(prof_trash, wheel = "Prof")
+
+#combine
+combined_trash = bind_rows(mr_trash, prof_trash)
+```
+
+This combined dataset has a total of **`r nrow(combined_trash)`** rows and **`r ncol(combined_trash)`** columns. Some of the key variables include the dumpster, month/year of collection, weight in tons, # of homes powered, and the count of types of trash, such as grocery bags, cigarette butts, etc. 
+
+What was the total weight of trash collected by Professor Trash Wheel?
+
+Professor Trash Wheel collected a total of **`r sum(pull(filter(combined_trash, wheel == "Prof"), weight_tons))`** tons of trash. 
+
+What was the total number of sports balls collected by Mr. Trash Wheel in 2020?
+
+Mr. Trash Wheel collected a total of **`r sum(pull(filter(combined_trash, wheel == "Mr." & year == 2020), sports_balls))`** sports balls in 2020. 
