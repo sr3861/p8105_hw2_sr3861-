@@ -115,29 +115,35 @@ Reformat the data so that route number and route name are distinct
 variables:
 
 ``` r
-transit_df %>%
-  mutate_at(c('route8','route9','route10','route11'), as.character) %>%
+  transit_tidy = 
+  mutate_at(transit_df, c('route8','route9','route10','route11'), as.character) %>%
   pivot_longer(route1:route11, 
                names_to = "route_number", 
                names_prefix = "route", 
                values_to = "route_name")
 ```
 
-    ## # A tibble: 20,548 × 10
-    ##    line     statio…¹ stati…² stati…³ entra…⁴ entry vending ada   route…⁵ route…⁶
-    ##    <chr>    <chr>      <dbl>   <dbl> <chr>   <lgl> <chr>   <lgl> <chr>   <chr>  
-    ##  1 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 1       R      
-    ##  2 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 2       <NA>   
-    ##  3 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 3       <NA>   
-    ##  4 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 4       <NA>   
-    ##  5 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 5       <NA>   
-    ##  6 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 6       <NA>   
-    ##  7 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 7       <NA>   
-    ##  8 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 8       <NA>   
-    ##  9 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 9       <NA>   
-    ## 10 4 Avenue 25th St     40.7   -74.0 Stair   TRUE  YES     FALSE 10      <NA>   
-    ## # … with 20,538 more rows, and abbreviated variable names ¹​station_name,
-    ## #   ²​station_latitude, ³​station_longitude, ⁴​entrance_type, ⁵​route_number,
-    ## #   ⁶​route_name
-
 How many distinct stations serve the A train?
+
+``` r
+nrow(
+  filter(
+    distinct(transit_tidy, line, station_name, route_name),route_name == "A"))
+```
+
+    ## [1] 60
+
+**60** distinct stations serve the A train.
+
+Of the stations, that serve the A train, how many are ADA complaint?
+
+``` r
+nrow(
+  filter(
+    distinct(transit_tidy, line, station_name, route_name, ada),
+    route_name == "A" & ada == TRUE))
+```
+
+    ## [1] 17
+
+**17** of the stations that serve the A train are ADA compliant.
