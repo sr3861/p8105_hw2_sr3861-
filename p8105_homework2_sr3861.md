@@ -162,11 +162,6 @@ Mr. Trash Wheel collected a total of **856** sports balls in 2020.
 
 ## Problem 3: FiveThirtyEight
 
-First, clean the data in pols-month.csv. Use separate() to break up the
-variable mon into integer variables year, month, and day; replace month
-number with month name; create a president variable taking values gop
-and dem, and remove prez_dem and prez_gop; and remove the day variable.
-
 Read & Clean pols-month.csv:
 
 ``` r
@@ -186,3 +181,74 @@ pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+Read & clean snp.csv:
+
+``` r
+snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") 
+```
+
+    ## Rows: 787 Columns: 2
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): date
+    ## dbl (1): close
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+#Convert year to 4 digits
+four_year = as.Date(snp$date,"%m/%d/%y")
+four_year = as.Date(ifelse(four_year > Sys.Date(), format(four_year, "19%y-%m-%d"), format(four_year)))
+snp[,"date"] <- four_year
+
+#Clean data
+snp = 
+  separate(snp, date, into = c("year", "month", "day"))%>%
+  mutate(month = month.name[as.integer(month)]) %>%
+  select(year, month, close)
+```
+
+Read & clean unemployment dataset:
+
+``` r
+unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
+  pivot_longer(Jan:Dec,
+               names_to = "month",
+               values_to = "percent") %>%
+  mutate(year = as.character(Year), 
+         month = month.name[match(pull(.,month),month.abb)]) %>%
+  arrange(year, month)
+```
+
+    ## Rows: 68 Columns: 13
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## dbl (13): Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+#Note: I removed the janitor::clean_names() statement since it made the months lower case
+```
+
+Merge the Datasets:
+
+``` r
+merged_538 = left_join(pols_month, snp, by = c("year","month")) %>%
+              left_join(unemployment, by = c("year","month"))
+```
+
+**Summary:** These datasets contain various information about politics
+and economics. The pols_month dataset contains info on national
+politicians and their party at various points of time. The snp dataset
+contains the closing values of the S&P stock market index at various
+points of time. The unemployment dataset has the monthly national
+unemployment rate over several years. The merged dataset contains
+**822** rows and **12** columns. The data contains information over the
+years **1947** to **2015.** It contains information on the number of
+politicians from each party, the S&P closing value, and unemployment
+rate at each month over this period. This dataset can be used to analyze
+associations between political landscapes and economic success.

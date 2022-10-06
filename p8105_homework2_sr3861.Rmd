@@ -162,5 +162,5 @@ merged_538 = left_join(pols_month, snp, by = c("year","month")) %>%
               left_join(unemployment, by = c("year","month"))
 ```
 
-Summary:
-Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+**Summary:**
+These datasets contain various information about politics and economics. The pols_month dataset contains info on national politicians and their party at various points of time. The snp dataset contains the closing values of the S&P stock market index at various points of time. The unemployment dataset has the monthly national unemployment rate over several years. The merged dataset contains **`r nrow(merged_538)`** rows and **`r ncol(merged_538)`** columns. The data contains information over the years **`r min(merged_538$year)`** to **`r max(merged_538$year)`.** It contains information on the number of politicians from each party, the S&P closing value, and unemployment rate at each month over this period. This dataset can be used to analyze associations between political landscapes and economic success. 
